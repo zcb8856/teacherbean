@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
       // For PDF generation, we would use a library like jsPDF or puppeteer
       // For now, return a simple PDF-like content
       const pdfContent = await generatePDF(data, type)
-      return new NextResponse(pdfContent, {
+      return new NextResponse(pdfContent as any, {
         headers: {
           'Content-Type': 'application/pdf',
           'Content-Disposition': `attachment; filename="${filename}.pdf"`
@@ -117,7 +117,7 @@ async function exportAnalytics(supabase: any, userId: string, filters?: any) {
   if (error) throw error
 
   // Transform data for export
-  return submissions.map(sub => ({
+  return submissions.map((sub: any) => ({
     '学生姓名': sub.student_name || sub.students?.alias || 'Unknown',
     '班级': sub.assignments.classes.name,
     '测试名称': sub.assignments.title,
@@ -159,7 +159,7 @@ async function exportSubmissions(supabase: any, userId: string, filters?: any) {
 
   if (error) throw error
 
-  return submissions.map(sub => ({
+  return submissions.map((sub: any) => ({
     '提交ID': sub.id,
     '学生姓名': sub.student_name || sub.students?.alias || 'Unknown',
     '班级': sub.assignments.classes.name,

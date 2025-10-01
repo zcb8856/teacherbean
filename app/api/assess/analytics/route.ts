@@ -120,7 +120,7 @@ async function fetchAnalyticsData(
     ? submissions.reduce((sum: number, sub: any) => sum + (sub.total_score || 0), 0) / submissions.length
     : 0
 
-  const onTimeSubmissions = submissions.filter(sub =>
+  const onTimeSubmissions = submissions.filter((sub: any) =>
     !sub.is_late && sub.assignments.due_at && new Date(sub.submitted_at) <= new Date(sub.assignments.due_at)
   ).length
 
@@ -137,7 +137,7 @@ async function fetchAnalyticsData(
   ]
 
   const scoreDistribution = scoreRanges.map(range => {
-    const count = submissions.filter(sub => {
+    const count = submissions.filter((sub: any) => {
       const percentage = sub.score_json?.percentage || 0
       return percentage >= range.min && percentage <= range.max
     }).length
@@ -191,7 +191,7 @@ async function fetchAnalyticsData(
 
   // Student performance
   const studentPerformance = params.viewMode === 'student'
-    ? submissions.map(sub => ({
+    ? submissions.map((sub: any) => ({
         student_id: sub.student_id || '',
         student_name: sub.student_name || sub.students?.alias || 'Unknown',
         score: sub.total_score || 0,
@@ -204,7 +204,7 @@ async function fetchAnalyticsData(
   // Class performance
   const classPerformance = params.viewMode === 'class'
     ? Object.values(
-        submissions.reduce((acc, sub) => {
+        submissions.reduce((acc: any, sub: any) => {
           const classId = sub.assignments.class_id
           const className = sub.assignments.classes.name
 

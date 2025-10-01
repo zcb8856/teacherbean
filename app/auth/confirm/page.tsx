@@ -40,9 +40,9 @@ export default function ConfirmPage() {
             setError(error.message)
           } else {
             setConfirmed(true)
-            // 延迟跳转到仪表板
+            // 延迟跳转到仪表板，使用硬刷新确保会话同步
             setTimeout(() => {
-              router.push('/dashboard')
+              window.location.href = '/dashboard'
             }, 2000)
           }
         } else {
@@ -52,7 +52,7 @@ export default function ConfirmPage() {
           if (user) {
             setConfirmed(true)
             setTimeout(() => {
-              router.push('/dashboard')
+              window.location.href = '/dashboard'
             }, 2000)
           } else {
             setError('缺少必要的确认参数')
@@ -102,7 +102,7 @@ export default function ConfirmPage() {
               您的邮箱已成功确认，即将跳转到仪表板...
             </p>
             <Button
-              onClick={() => router.push('/dashboard')}
+              onClick={() => window.location.href = '/dashboard'}
               className="w-full"
             >
               立即前往仪表板

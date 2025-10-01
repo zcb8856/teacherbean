@@ -34,7 +34,8 @@ export default function DashboardPage() {
     const fetchDashboardData = async () => {
       try {
         // 检查是否是开发者模式或者演示模式
-        if (process.env.NODE_ENV === 'development') {
+        // 在生产环境中也使用演示数据，直到数据库完全配置好
+        if (process.env.NODE_ENV === 'development' || true) {
           // 演示模式：使用模拟数据
           setStats({
             total_classes: 8,

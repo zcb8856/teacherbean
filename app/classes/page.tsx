@@ -1,5 +1,7 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+
 import { useState, useEffect } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
@@ -40,12 +42,11 @@ export default function ClassesPage() {
   })
   const [error, setError] = useState<string | null>(null)
 
-  const supabase = createClient()
-
   // 获取班级列表
   const fetchClasses = async (page = 1, search = '') => {
     try {
       setLoading(true)
+      const supabase = createClient()
       setError(null)
 
       const params = new URLSearchParams({

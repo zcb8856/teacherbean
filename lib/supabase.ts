@@ -1,10 +1,12 @@
 import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 
 export const createClient = () => {
-  return createSupabaseClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
+  // During build time, environment variables might not be available
+  // Return a placeholder client that won't be used
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key'
+
+  return createSupabaseClient(url, key)
 }
 
 export type Database = {

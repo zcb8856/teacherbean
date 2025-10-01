@@ -1,5 +1,7 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+
 import { useState, useEffect } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
@@ -28,7 +30,6 @@ export default function DashboardPage() {
     recent_activity: []
   })
   const [loading, setLoading] = useState(true)
-  const supabase = createClient()
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -70,6 +71,7 @@ export default function DashboardPage() {
           return
         }
 
+        const supabase = createClient()
         const { data: { user } } = await supabase.auth.getUser()
         if (!user) {
           // 如果没有用户登录，也使用演示数据
@@ -169,7 +171,7 @@ export default function DashboardPage() {
     }
 
     fetchDashboardData()
-  }, [supabase, t])
+  }, [t])
 
   const quickActions = [
     {

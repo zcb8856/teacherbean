@@ -14,10 +14,13 @@ export function Header() {
   const [user, setUser] = useState<Profile | null>(null)
   const { language, setLanguage } = useLanguage()
   const { t } = useTranslation()
-  const supabase = createClient()
 
   useEffect(() => {
     const getUser = async () => {
+      // Only create client when running in browser
+      if (typeof window === 'undefined') return
+
+      const supabase = createClient()
       const { data: { user: authUser } } = await supabase.auth.getUser()
       if (authUser) {
         const { data: profile } = await supabase
@@ -29,7 +32,7 @@ export function Header() {
       }
     }
     getUser()
-  }, [supabase])
+  }, [])
 
   return (
     <header className="bg-white/95 backdrop-blur-sm border-b border-soft-cyan-200 px-6 py-4 shadow-sm">

@@ -104,7 +104,7 @@ export function AuthForm({ mode }: AuthFormProps) {
             }, 1500)  // 增加到1.5秒确保会话同步
           } else {
             // 如果没有会话，可能需要邮箱确认
-            toast.info(t('Please check your email to confirm your account'))
+            toast.success(t('Please check your email to confirm your account'))
           }
         }
       } else {

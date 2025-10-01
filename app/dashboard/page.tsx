@@ -175,8 +175,8 @@ export default function DashboardPage() {
 
   const quickActions = [
     {
-      title: t('Create Lesson Plan'),
-      description: t('Generate AI-powered lesson plans'),
+      title: '教案设计',
+      description: 'AI智能生成教学教案',
       href: '/plan',
       icon: BookOpen,
       color: 'bg-soft-cyan-600'

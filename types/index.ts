@@ -230,6 +230,15 @@ export interface LessonPlanForm {
   class_size: number
   student_level: string
   special_requirements?: string
+  // 新增教案设计字段
+  subject: string
+  grade: string
+  textbook?: string
+  curriculum_standards: string
+  teaching_objectives: string
+  key_points: string
+  difficult_points: string
+  teaching_methods: string[]
 }
 
 export interface ReadingMaterialForm {

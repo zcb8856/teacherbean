@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
-import { BookOpen, Clock, Users, Target, Download, Save, Home } from 'lucide-react'
+import { BookOpen, Clock, Users, Target, Download, Save, Home, FileText, Bookmark } from 'lucide-react'
 import type { LessonPlanForm, CEFRLevel } from '@/types'
 import toast from 'react-hot-toast'
 import { useTranslation } from '@/hooks/useTranslation'
@@ -20,13 +20,25 @@ export default function LessonPlanPage() {
     focus_skills: [],
     class_size: 25,
     student_level: 'Beginner to Intermediate',
-    special_requirements: ''
+    special_requirements: '',
+    // 新增教案设计字段
+    subject: '',
+    grade: '',
+    textbook: '',
+    curriculum_standards: '',
+    teaching_objectives: '',
+    key_points: '',
+    difficult_points: '',
+    teaching_methods: []
   })
   const [generatedPlan, setGeneratedPlan] = useState<any>(null)
   const [loading, setLoading] = useState(false)
 
   const cefrLevels: CEFRLevel[] = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2']
   const skillOptions = ['Speaking', 'Listening', 'Reading', 'Writing', 'Grammar', 'Vocabulary', 'Pronunciation']
+  const gradeOptions = ['小学一年级', '小学二年级', '小学三年级', '小学四年级', '小学五年级', '小学六年级', '初中一年级', '初中二年级', '初中三年级', '高中一年级', '高中二年级', '高中三年级']
+  const subjectOptions = ['语文', '数学', '英语', '物理', '化学', '生物', '历史', '地理', '政治', '音乐', '美术', '体育', '信息技术']
+  const teachingMethodOptions = ['讲授法', '讨论法', '演示法', '练习法', '实验法', '任务驱动法', '合作学习', '探究学习', '情境教学', '游戏教学']
 
   const handleSkillToggle = (skill: string) => {
     setFormData(prev => ({
@@ -37,9 +49,18 @@ export default function LessonPlanPage() {
     }))
   }
 
+  const handleTeachingMethodToggle = (method: string) => {
+    setFormData(prev => ({
+      ...prev,
+      teaching_methods: prev.teaching_methods.includes(method)
+        ? prev.teaching_methods.filter(m => m !== method)
+        : [...prev.teaching_methods, method]
+    }))
+  }
+
   const handleGeneratePlan = async () => {
-    if (!formData.title || !formData.topic || formData.focus_skills.length === 0) {
-      toast.error(t('Please fill in all required fields'))
+    if (!formData.title || !formData.subject || !formData.grade || !formData.teaching_objectives) {
+      toast.error('请填写所有必填字段（课题、学科、年级、教学目标）')
       return
     }
 
@@ -47,56 +68,57 @@ export default function LessonPlanPage() {
     try {
       // 检查是否是开发者模式或演示模式
       if (process.env.NODE_ENV === 'development' || true) {
-        // 演示模式：生成模拟的课程计划
+        // 演示模式：生成模拟的教案
         setTimeout(() => {
           const demoLessonPlan = {
             title: formData.title,
-            level: formData.level,
+            subject: formData.subject,
+            grade: formData.grade,
             duration: formData.duration,
-            topic: formData.topic,
-            objectives: [
-              t('Students will be able to understand and use ') + formData.topic.toLowerCase(),
-              t('Students will practice ') + formData.focus_skills.join(t(' and ')).toLowerCase(),
-              t('Students will demonstrate comprehension through interactive activities'),
-              t('Students will apply new vocabulary in contextual conversations')
-            ],
-            procedures: [
+            textbook: formData.textbook,
+            teaching_objectives: formData.teaching_objectives,
+            key_points: formData.key_points,
+            difficult_points: formData.difficult_points,
+            teaching_methods: formData.teaching_methods.join('、'),
+            curriculum_standards: formData.curriculum_standards,
+            teaching_process: [
               {
-                type: 'warm_up',
+                step: '导入环节',
                 duration: 5,
-                description: t('Engaging starter activity to activate prior knowledge and introduce the topic'),
-                materials: [t('Whiteboard'), t('Visual aids')]
+                activities: '通过多媒体展示相关图片，激发学生学习兴趣，引入本节课主题',
+                purpose: '营造学习氛围，激发学习兴趣'
               },
               {
-                type: 'presentation',
-                duration: 15,
-                description: t('Introduce new vocabulary and grammar structures related to ') + formData.topic,
-                materials: [t('Presentation slides'), t('Audio materials'), t('Handouts')]
+                step: '新课讲授',
+                duration: 20,
+                activities: '结合教材内容，运用' + (formData.teaching_methods.slice(0, 2).join('、') || '讲授法、讨论法') + '等方法进行知识点讲解',
+                purpose: '让学生掌握核心知识点，突破教学重点'
               },
               {
-                type: 'practice',
-                duration: 15,
-                description: t('Guided practice activities focusing on ') + formData.focus_skills.join(', '),
-                materials: [t('Worksheets'), t('Pair work cards'), t('Interactive exercises')]
+                step: '巩固练习',
+                duration: 12,
+                activities: '设计层次性练习，让学生在实践中深化理解',
+                purpose: '巩固所学知识，突破教学难点'
               },
               {
-                type: 'production',
-                duration: 8,
-                description: t('Students apply learning through communicative tasks and real-world scenarios'),
-                materials: [t('Role-play cards'), t('Speaking prompts')]
+                step: '总结提升',
+                duration: 6,
+                activities: '师生共同总结本节课重点内容，布置课后作业',
+                purpose: '梳理知识脈络，为下节课做准备'
               },
               {
-                type: 'wrap_up',
+                step: '板书设计',
                 duration: 2,
-                description: t('Review key points, assign homework, and preview next lesson'),
-                materials: [t('Summary handout')]
+                activities: '设计简洁明了的板书，突出重点难点',
+                purpose: '帮助学生理清思路，形成知识结构'
               }
             ],
-            assessment: t('Formative assessment through observation, peer feedback, and quick comprehension checks. Students will be evaluated on accuracy, fluency, and participation.'),
-            homework: t('Complete vocabulary exercises, prepare for next lesson\'s topic, and practice speaking with a partner.')
+            assessment_methods: '采用过程性评价与终结性评价相结合的方式，通过课堂观察、提问、练习等多种形式评价学生学习效果',
+            homework: '完成课后练习题，预习下节课内容，思考相关问题',
+            teaching_reflection: '本节课设计注重理论与实践相结合，通过多样化的教学方法提高学生学习兴趣和参与度'
           }
           setGeneratedPlan(demoLessonPlan)
-          toast.success(t('Lesson plan generated successfully!'))
+          toast.success('教案生成成功！')
           setLoading(false)
         }, 1500)
         return
@@ -112,9 +134,9 @@ export default function LessonPlanPage() {
 
       const data = await response.json()
       setGeneratedPlan(data)
-      toast.success(t('Lesson plan generated successfully!'))
+      toast.success('教案生成成功！')
     } catch (error) {
-      toast.error(t('Failed to generate lesson plan'))
+      toast.error('生成教案失败')
     } finally {
       setLoading(false)
     }
@@ -128,7 +150,7 @@ export default function LessonPlanPage() {
       if (process.env.NODE_ENV === 'development' || true) {
         // 演示模式：模拟保存成功
         setTimeout(() => {
-          toast.success(t('Lesson plan saved to library!'))
+          toast.success('教案已保存到资料库！')
         }, 500)
         return
       }
@@ -148,9 +170,9 @@ export default function LessonPlanPage() {
 
       if (!response.ok) throw new Error('Failed to save lesson plan')
 
-      toast.success(t('Lesson plan saved to library!'))
+      toast.success('教案已保存到资料库！')
     } catch (error) {
-      toast.error(t('Failed to save lesson plan'))
+      toast.error('保存教案失败')
     }
   }
 
@@ -159,8 +181,8 @@ export default function LessonPlanPage() {
       <div className="max-w-7xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-text-primary drop-shadow-sm">{t('Lesson Planning')}</h1>
-          <p className="text-text-primary-light">{t('AI-generated lesson plans with CEFR alignment, learning objectives, and integrated materials generation')}</p>
+          <h1 className="text-3xl font-bold text-text-primary drop-shadow-sm">教案设计</h1>
+          <p className="text-text-primary-light">基于课程标准和教学要求，AI智能生成符合教学目标的详细教案</p>
         </div>
         <Link href="/">
           <Button variant="outline" className="flex items-center gap-2 bg-white hover:bg-soft-cyan-50 border-soft-cyan-200">
@@ -175,111 +197,148 @@ export default function LessonPlanPage() {
         <Card className="bg-soft-cyan-50 border-soft-cyan-200 shadow-lg">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-text-primary">
-              <BookOpen className="h-5 w-5" />
-              {t('Lesson Plan Details')}
+              <FileText className="h-5 w-5" />
+              教案设计详情
             </CardTitle>
             <CardDescription className="text-text-primary-light">
-              {t('Fill in the details to generate a comprehensive lesson plan')}
+              填写课题、教学目标和课程标准，生成符合教学要求的详细教案
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div>
-              <label className="text-sm font-medium text-text-primary">{t('Lesson Title')} *</label>
-              <Input
-                value={formData.title}
-                onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-                placeholder={t('e.g., Introduction to Present Perfect Tense')}
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
+            {/* 基本信息 */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="text-sm font-medium text-text-primary">{t('CEFR Level')}</label>
+                <label className="text-sm font-medium text-text-primary">课题名称 *</label>
+                <Input
+                  value={formData.title}
+                  onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+                  placeholder="例如：二次函数的图像和性质"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium text-text-primary">学科 *</label>
                 <select
-                  value={formData.level}
-                  onChange={(e) => setFormData(prev => ({ ...prev, level: e.target.value as CEFRLevel }))}
+                  value={formData.subject}
+                  onChange={(e) => setFormData(prev => ({ ...prev, subject: e.target.value }))}
                   className="w-full h-10 px-3 rounded-md border border-input bg-background"
                 >
-                  {cefrLevels.map(level => (
-                    <option key={level} value={level}>{level}</option>
+                  <option value="">请选择学科</option>
+                  {subjectOptions.map(subject => (
+                    <option key={subject} value={subject}>{subject}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="text-sm font-medium text-text-primary">年级 *</label>
+                <select
+                  value={formData.grade}
+                  onChange={(e) => setFormData(prev => ({ ...prev, grade: e.target.value }))}
+                  className="w-full h-10 px-3 rounded-md border border-input bg-background"
+                >
+                  <option value="">请选择年级</option>
+                  {gradeOptions.map(grade => (
+                    <option key={grade} value={grade}>{grade}</option>
                   ))}
                 </select>
               </div>
               <div>
-                <label className="text-sm font-medium text-text-primary">{t('Duration (minutes)')}</label>
+                <label className="text-sm font-medium text-text-primary">课时时长（分钟）</label>
                 <Input
                   type="number"
                   value={formData.duration}
                   onChange={(e) => setFormData(prev => ({ ...prev, duration: parseInt(e.target.value) }))}
                   min="15"
                   max="120"
+                  placeholder="45"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium text-text-primary">使用教材</label>
+                <Input
+                  value={formData.textbook || ''}
+                  onChange={(e) => setFormData(prev => ({ ...prev, textbook: e.target.value }))}
+                  placeholder="例如：人教版九年级上册"
                 />
               </div>
             </div>
 
             <div>
-              <label className="text-sm font-medium text-text-primary">{t('Topic/Theme')} *</label>
-              <Input
-                value={formData.topic}
-                onChange={(e) => setFormData(prev => ({ ...prev, topic: e.target.value }))}
-                placeholder={t('e.g., Daily Routines, Past Experiences, Future Plans')}
+              <label className="text-sm font-medium text-text-primary">教学目标 *</label>
+              <textarea
+                value={formData.teaching_objectives}
+                onChange={(e) => setFormData(prev => ({ ...prev, teaching_objectives: e.target.value }))}
+                placeholder="请描述本节课的教学目标，包括知识目标、能力目标和情感目标..."
+                className="w-full p-3 rounded-md border border-input bg-background min-h-[80px]"
               />
             </div>
 
             <div>
-              <label className="text-sm font-medium text-text-primary">{t('Focus Skills')} *</label>
-              <div className="grid grid-cols-2 gap-2 mt-2">
-                {skillOptions.map(skill => (
-                  <label key={skill} className="flex items-center gap-2">
+              <label className="text-sm font-medium text-text-primary">课程标准</label>
+              <textarea
+                value={formData.curriculum_standards}
+                onChange={(e) => setFormData(prev => ({ ...prev, curriculum_standards: e.target.value }))}
+                placeholder="请输入相关的课程标准和教学要求..."
+                className="w-full p-3 rounded-md border border-input bg-background min-h-[60px]"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="text-sm font-medium text-text-primary">教学重点</label>
+                <textarea
+                  value={formData.key_points}
+                  onChange={(e) => setFormData(prev => ({ ...prev, key_points: e.target.value }))}
+                  placeholder="请列出本节课的教学重点..."
+                  className="w-full p-3 rounded-md border border-input bg-background min-h-[80px]"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium text-text-primary">教学难点</label>
+                <textarea
+                  value={formData.difficult_points}
+                  onChange={(e) => setFormData(prev => ({ ...prev, difficult_points: e.target.value }))}
+                  placeholder="请列出本节课的教学难点..."
+                  className="w-full p-3 rounded-md border border-input bg-background min-h-[80px]"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="text-sm font-medium text-text-primary">教学方法</label>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
+                {teachingMethodOptions.map(method => (
+                  <label key={method} className="flex items-center gap-2">
                     <input
                       type="checkbox"
-                      checked={formData.focus_skills.includes(skill)}
-                      onChange={() => handleSkillToggle(skill)}
+                      checked={formData.teaching_methods.includes(method)}
+                      onChange={() => handleTeachingMethodToggle(method)}
                       className="rounded"
                     />
-                    <span className="text-sm">{skill}</span>
+                    <span className="text-sm">{method}</span>
                   </label>
                 ))}
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="text-sm font-medium text-text-primary">{t('Class Size')}</label>
-                <Input
-                  type="number"
-                  value={formData.class_size}
-                  onChange={(e) => setFormData(prev => ({ ...prev, class_size: parseInt(e.target.value) }))}
-                  min="1"
-                  max="50"
-                />
-              </div>
-              <div>
-                <label className="text-sm font-medium text-text-primary">{t('Student Level')}</label>
-                <Input
-                  value={formData.student_level}
-                  onChange={(e) => setFormData(prev => ({ ...prev, student_level: e.target.value }))}
-                  placeholder={t('e.g., Mixed ability, High beginner')}
-                />
-              </div>
-            </div>
-
             <div>
-              <label className="text-sm font-medium text-text-primary">{t('Special Requirements')}</label>
+              <label className="text-sm font-medium text-text-primary">其他要求</label>
               <textarea
                 value={formData.special_requirements}
                 onChange={(e) => setFormData(prev => ({ ...prev, special_requirements: e.target.value }))}
-                placeholder={t('Any special considerations, learning objectives, or constraints...')}
-                className="w-full p-3 rounded-md border border-input bg-background min-h-[80px]"
+                placeholder="其他特殊要求或补充说明..."
+                className="w-full p-3 rounded-md border border-input bg-background min-h-[60px]"
               />
             </div>
 
             <Button
               onClick={handleGeneratePlan}
               disabled={loading}
-              className="w-full"
+              className="w-full bg-gradient-to-r from-soft-cyan-600 to-soft-cyan-700 hover:from-soft-cyan-700 hover:to-soft-cyan-800"
             >
-              {loading ? t('Generating...') : t('Generate Lesson Plan')}
+              {loading ? '正在生成...' : '生成教案'}
             </Button>
           </CardContent>
         </Card>
@@ -288,11 +347,11 @@ export default function LessonPlanPage() {
         <Card className="bg-soft-cyan-50 border-soft-cyan-200 shadow-lg">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-text-primary">
-              <Target className="h-5 w-5" />
-              {t('Generated Lesson Plan')}
+              <Bookmark className="h-5 w-5" />
+              生成的教案
             </CardTitle>
             <CardDescription className="text-text-primary-light">
-              {t('Your AI-generated lesson plan will appear here')}
+              AI生成的详细教案将在这里显示
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -301,74 +360,106 @@ export default function LessonPlanPage() {
                 <div className="flex gap-2">
                   <Button onClick={handleSavePlan} size="sm">
                     <Save className="h-4 w-4 mr-2" />
-                    {t('Save to Library')}
+                    保存到资料库
                   </Button>
                   <Button variant="outline" size="sm">
                     <Download className="h-4 w-4 mr-2" />
-                    {t('Export PDF')}
+                    导出 PDF
                   </Button>
                 </div>
 
-                <div className="space-y-4">
-                  <div>
-                    <h3 className="font-semibold text-lg">{generatedPlan.title}</h3>
-                    <div className="flex gap-4 text-sm text-text-primary-light mt-2">
-                      <span className="flex items-center gap-1">
-                        <Clock className="h-4 w-4" />
-                        {generatedPlan.duration} min
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Users className="h-4 w-4" />
-                        {generatedPlan.level}
-                      </span>
+                <div className="space-y-6">
+                  {/* 教案基本信息 */}
+                  <div className="bg-white p-4 rounded-lg border">
+                    <h3 className="font-bold text-xl mb-3 text-center border-b pb-2">{generatedPlan.title}</h3>
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div><strong>学科：</strong>{generatedPlan.subject}</div>
+                      <div><strong>年级：</strong>{generatedPlan.grade}</div>
+                      <div><strong>课时：</strong>{generatedPlan.duration}分钟</div>
+                      <div><strong>教材：</strong>{generatedPlan.textbook || '未指定'}</div>
                     </div>
                   </div>
 
-                  <div>
-                    <h4 className="font-medium">{t('Learning Objectives')}</h4>
-                    <ul className="list-disc list-inside space-y-1 text-sm mt-2">
-                      {generatedPlan.objectives?.map((obj: string, idx: number) => (
-                        <li key={idx}>{obj}</li>
-                      ))}
-                    </ul>
+                  {/* 教学目标 */}
+                  <div className="bg-white p-4 rounded-lg border">
+                    <h4 className="font-medium text-lg mb-2 text-soft-cyan-700">教学目标</h4>
+                    <div className="text-sm text-gray-700">{generatedPlan.teaching_objectives}</div>
                   </div>
 
-                  <div>
-                    <h4 className="font-medium">{t('Lesson Activities')}</h4>
-                    <div className="space-y-3 mt-2">
-                      {generatedPlan.procedures?.map((activity: any, idx: number) => (
-                        <div key={idx} className="border rounded-lg p-3">
-                          <div className="flex justify-between items-start">
-                            <h5 className="font-medium capitalize">{activity.type.replace('_', ' ')}</h5>
-                            <span className="text-sm text-text-primary-light">{activity.duration} min</span>
+                  {/* 课程标准 */}
+                  {generatedPlan.curriculum_standards && (
+                    <div className="bg-white p-4 rounded-lg border">
+                      <h4 className="font-medium text-lg mb-2 text-soft-cyan-700">课程标准</h4>
+                      <div className="text-sm text-gray-700">{generatedPlan.curriculum_standards}</div>
+                    </div>
+                  )}
+
+                  {/* 重点难点 */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="bg-white p-4 rounded-lg border">
+                      <h4 className="font-medium text-lg mb-2 text-soft-cyan-700">教学重点</h4>
+                      <div className="text-sm text-gray-700">{generatedPlan.key_points}</div>
+                    </div>
+                    <div className="bg-white p-4 rounded-lg border">
+                      <h4 className="font-medium text-lg mb-2 text-soft-cyan-700">教学难点</h4>
+                      <div className="text-sm text-gray-700">{generatedPlan.difficult_points}</div>
+                    </div>
+                  </div>
+
+                  {/* 教学方法 */}
+                  {generatedPlan.teaching_methods && (
+                    <div className="bg-white p-4 rounded-lg border">
+                      <h4 className="font-medium text-lg mb-2 text-soft-cyan-700">教学方法</h4>
+                      <div className="text-sm text-gray-700">{generatedPlan.teaching_methods}</div>
+                    </div>
+                  )}
+
+                  {/* 教学过程 */}
+                  <div className="bg-white p-4 rounded-lg border">
+                    <h4 className="font-medium text-lg mb-4 text-soft-cyan-700">教学过程</h4>
+                    <div className="space-y-4">
+                      {generatedPlan.teaching_process?.map((step: any, idx: number) => (
+                        <div key={idx} className="border-l-4 border-soft-cyan-300 pl-4 py-2">
+                          <div className="flex justify-between items-center mb-2">
+                            <h5 className="font-medium text-soft-cyan-800">{step.step}</h5>
+                            <span className="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded">{step.duration}分钟</span>
                           </div>
-                          <p className="text-sm text-text-primary-light mt-1">{activity.description}</p>
-                          {activity.materials && (
-                            <div className="mt-2">
-                              <span className="text-xs font-medium text-text-primary-light">{t('Materials')}: </span>
-                              <span className="text-xs text-text-primary-light">{activity.materials.join(', ')}</span>
-                            </div>
-                          )}
+                          <div className="text-sm text-gray-700 mb-2">
+                            <strong>活动内容：</strong>{step.activities}
+                          </div>
+                          <div className="text-sm text-gray-600">
+                            <strong>设计意图：</strong>{step.purpose}
+                          </div>
                         </div>
                       ))}
                     </div>
                   </div>
 
-                  <div>
-                    <h4 className="font-medium">{t('Assessment & Homework')}</h4>
-                    <p className="text-sm text-text-primary-light mt-2">{generatedPlan.assessment}</p>
-                    {generatedPlan.homework && (
-                      <p className="text-sm text-text-primary-light mt-2">
-                        <strong>{t('Homework')}:</strong> {generatedPlan.homework}
-                      </p>
-                    )}
+                  {/* 评价与作业 */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="bg-white p-4 rounded-lg border">
+                      <h4 className="font-medium text-lg mb-2 text-soft-cyan-700">教学评价</h4>
+                      <div className="text-sm text-gray-700">{generatedPlan.assessment_methods}</div>
+                    </div>
+                    <div className="bg-white p-4 rounded-lg border">
+                      <h4 className="font-medium text-lg mb-2 text-soft-cyan-700">课后作业</h4>
+                      <div className="text-sm text-gray-700">{generatedPlan.homework}</div>
+                    </div>
                   </div>
+
+                  {/* 教学反思 */}
+                  {generatedPlan.teaching_reflection && (
+                    <div className="bg-white p-4 rounded-lg border">
+                      <h4 className="font-medium text-lg mb-2 text-soft-cyan-700">教学反思</h4>
+                      <div className="text-sm text-gray-700">{generatedPlan.teaching_reflection}</div>
+                    </div>
+                  )}
                 </div>
               </div>
             ) : (
               <div className="text-center py-12 text-text-primary-muted">
-                <BookOpen className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p>{t('Fill in the form and click "Generate Lesson Plan" to see your AI-created lesson plan here.')}</p>
+                <FileText className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                <p>填写表单并点击“生成教案”按钮，AI将为您生成详细的教案内容。</p>
               </div>
             )}
           </CardContent>

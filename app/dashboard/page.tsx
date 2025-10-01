@@ -103,25 +103,25 @@ export default function DashboardPage() {
         const { count: classesCount } = await supabase
           .from('classes')
           .select('*', { count: 'exact', head: true })
-          .eq('owner_id', user.id)
+          .eq('owner_id', user!.id)
 
         // Fetch students count
         const { count: studentsCount } = await supabase
           .from('students')
           .select('*, classes!inner(*)', { count: 'exact', head: true })
-          .eq('classes.owner_id', user.id)
+          .eq('classes.owner_id', user!.id)
 
         // Fetch materials count
         const { count: materialsCount } = await supabase
           .from('materials')
           .select('*', { count: 'exact', head: true })
-          .eq('owner_id', user.id)
+          .eq('owner_id', user!.id)
 
         // Fetch assignments count (this would be graded assignments in real app)
         const { count: assignmentsCount } = await supabase
           .from('assignments')
           .select('*, classes!inner(*)', { count: 'exact', head: true })
-          .eq('classes.owner_id', user.id)
+          .eq('classes.owner_id', user!.id)
 
         setStats({
           total_classes: classesCount || 0,

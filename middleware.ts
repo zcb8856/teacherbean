@@ -42,9 +42,18 @@ export async function middleware(request: NextRequest) {
   const protectedRoutes = ['/dashboard', '/classes', '/classroom', '/plan', '/reading', '/dialog', '/game', '/writing', '/assess', '/library']
   const isProtectedRoute = protectedRoutes.some(route => request.nextUrl.pathname.startsWith(route))
 
-  // Auth routes
+  // Auth routes (excluded confirm and callback for auth flow)
   const authRoutes = ['/auth/login', '/auth/signup']
   const isAuthRoute = authRoutes.includes(request.nextUrl.pathname)
+
+  // Auth flow routes that should bypass auth check
+  const authFlowRoutes = ['/auth/confirm', '/auth/callback']
+  const isAuthFlowRoute = authFlowRoutes.some(route => request.nextUrl.pathname.startsWith(route))
+
+  // Allow auth flow routes to proceed without checks
+  if (isAuthFlowRoute) {
+    return response
+  }
 
   // Redirect to login if trying to access protected route without session
   if (isProtectedRoute && !session) {

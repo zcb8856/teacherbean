@@ -87,7 +87,7 @@ export function AuthForm({ mode }: AuthFormProps) {
       }
 
       if (mode === 'login') {
-        const { error } = await supabase.auth.signInWithPassword({
+        const { data, error } = await supabase.auth.signInWithPassword({
           email,
           password,
         })
@@ -96,10 +96,16 @@ export function AuthForm({ mode }: AuthFormProps) {
           toast.error(error.message)
         } else {
           toast.success(t('Logged in successfully!'))
-          // 使用硬刷新确保会话状态正确同步
-          setTimeout(() => {
-            window.location.href = '/dashboard'
-          }, 1000)
+          // 确保会话已建立，然后跳转
+          if (data.session) {
+            // 等待会话设置到 cookie 中
+            setTimeout(() => {
+              window.location.href = '/dashboard'
+            }, 1500)  // 增加到1.5秒确保会话同步
+          } else {
+            // 如果没有会话，可能需要邮箱确认
+            toast.info(t('Please check your email to confirm your account'))
+          }
         }
       } else {
         const { error } = await supabase.auth.signUp({

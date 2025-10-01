@@ -80,7 +80,12 @@ export function AuthForm({ mode }: AuthFormProps) {
         // 演示模式：模拟成功登录
         setTimeout(() => {
           toast.success(mode === 'login' ? t('Demo login successful!') : t('Demo account created!'))
-          router.push(mode === 'login' ? '/dashboard' : '/auth/login')
+          if (mode === 'login') {
+            // 在开发模式下使用硬跳转，与生产环境保持一致
+            window.location.href = '/dashboard'
+          } else {
+            router.push('/auth/login')
+          }
           setLoading(false)
         }, 1000)
         return
@@ -98,10 +103,33 @@ export function AuthForm({ mode }: AuthFormProps) {
           toast.success(t('Logged in successfully!'))
           // 确保会话已建立，然后跳转
           if (data.session) {
-            // 等待会话设置到 cookie 中
-            setTimeout(() => {
+            // 确保会话cookie已设置，然后验证再跳转
+            const waitForSession = async () => {
+              let attempts = 0
+              const maxAttempts = 10
+
+              while (attempts < maxAttempts) {
+                try {
+                  const { data: { session: currentSession } } = await supabase.auth.getSession()
+                  if (currentSession) {
+                    console.log('Session verified, redirecting to dashboard')
+                    window.location.href = '/dashboard'
+                    return
+                  }
+                } catch (error) {
+                  console.log('Session check attempt', attempts + 1, error)
+                }
+
+                attempts++
+                await new Promise(resolve => setTimeout(resolve, 500)) // 等待500ms再检查
+              }
+
+              // 如果10次检查后仍没有会话，强制跳转
+              console.log('Max attempts reached, forcing redirect')
               window.location.href = '/dashboard'
-            }, 1500)  // 增加到1.5秒确保会话同步
+            }
+
+            waitForSession()
           } else {
             // 如果没有会话，可能需要邮箱确认
             toast.success(t('Please check your email to confirm your account'))

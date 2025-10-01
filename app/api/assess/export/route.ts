@@ -184,7 +184,7 @@ async function exportItems(supabase: any, userId: string, filters?: any) {
 
   if (error) throw error
 
-  return items.map(item => ({
+  return items.map((item: any) => ({
     '题目ID': item.id,
     '题型': getItemTypeName(item.type),
     '级别': item.level,

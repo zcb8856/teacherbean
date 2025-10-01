@@ -393,7 +393,11 @@ export default function ClassesPage() {
       {/* 编辑班级表单 */}
       {editingClass && (
         <ClassForm
-          initialData={editingClass}
+          initialData={{
+            name: editingClass.name,
+            grade: editingClass.grade || undefined,
+            description: editingClass.description || undefined
+          }}
           onSubmit={handleUpdateClass}
           onCancel={() => setEditingClass(null)}
           title="编辑班级"

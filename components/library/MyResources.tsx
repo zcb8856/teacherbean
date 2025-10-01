@@ -308,7 +308,7 @@ export function MyResources({}: MyResourcesProps) {
             {/* 分组方式 */}
             <div className="flex items-center gap-2">
               <span className="text-sm font-medium">分组方式：</span>
-              <Select value={groupBy} onValueChange={(value: 'type' | 'date' | 'level') => setGroupBy(value)}>
+              <Select value={groupBy} onValueChange={(value) => setGroupBy(value as 'type' | 'date' | 'level')}>
                 <SelectTrigger className="w-32">
                   <SelectValue />
                 </SelectTrigger>

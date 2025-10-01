@@ -65,15 +65,15 @@ export default function WritingPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          task_id: currentTask.id,
+          task_id: currentTask?.id,
           student_text: studentText,
-          rubric_json: gradingResult.rubric,
+          rubric_json: gradingResult?.rubric,
           ai_feedback: {
-            sentence_suggestions: gradingResult.sentence_suggestions,
-            improved_version: gradingResult.improved_version,
-            teacher_brief: gradingResult.teacher_brief
+            sentence_suggestions: gradingResult?.sentence_suggestions,
+            improved_version: gradingResult?.improved_version,
+            teacher_brief: gradingResult?.teacher_brief
           },
-          final_score: gradingResult.rubric.overall
+          final_score: gradingResult?.rubric?.overall
         })
       })
 
@@ -121,7 +121,7 @@ export default function WritingPage() {
       const url = window.URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
-      a.download = `${currentTask.title}_讲评稿.docx`
+      a.download = `${currentTask?.title || 'writing_feedback'}_讲评稿.docx`
       document.body.appendChild(a)
       a.click()
       window.URL.revokeObjectURL(url)

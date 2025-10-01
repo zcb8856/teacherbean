@@ -175,7 +175,7 @@ export async function optimizedBatchInsert<T extends Record<string, any>>(
       async () => {
         const { data, error } = await supabase
           .from(tableName)
-          .insert(batch)
+          .insert(batch as any)
           .select()
 
         if (error) {

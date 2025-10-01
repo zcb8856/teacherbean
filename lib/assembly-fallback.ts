@@ -199,7 +199,7 @@ function substituteItemTypes(
     const available = availableByType[itemType]?.length || 0
     if (available < requiredCount) {
       const deficit = requiredCount - available
-      const possibleSubs = substitutions[itemType] || []
+      const possibleSubs = substitutions[itemType as keyof typeof substitutions] || []
 
       for (const subType of possibleSubs) {
         const subAvailable = availableByType[subType]?.length || 0

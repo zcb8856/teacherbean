@@ -173,11 +173,11 @@ export function AnalyticsDashboard() {
     const data = viewMode === 'class' ? analyticsData.class_performance : analyticsData.student_performance
 
     if (format === 'csv') {
-      const csvContent = convertToCSV(data)
+      const csvContent = convertToCSV(data || [])
       downloadFile(csvContent, `analytics_${viewMode}_${new Date().toISOString().split('T')[0]}.csv`, 'text/csv')
     } else {
       // For PDF, we would use a library like jsPDF
-      toast.info('PDF导出功能正在开发中')
+      toast('PDF导出功能正在开发中')
     }
   }
 
@@ -237,7 +237,7 @@ export function AnalyticsDashboard() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label className="text-sm font-medium mb-2 block">视图模式</label>
-              <Select value={viewMode} onValueChange={(value: 'class' | 'student') => setViewMode(value)}>
+              <Select value={viewMode} onValueChange={(value) => setViewMode(value as 'class' | 'student')}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -456,7 +456,7 @@ export function AnalyticsDashboard() {
                 </tr>
               </thead>
               <tbody>
-                {(viewMode === 'class' ? analyticsData.class_performance : analyticsData.student_performance)
+                {((viewMode === 'class' ? analyticsData.class_performance : analyticsData.student_performance) || [])
                   .slice(0, 10)
                   .map((item, index) => (
                     <tr key={index} className="border-b">

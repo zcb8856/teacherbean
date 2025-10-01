@@ -26,25 +26,42 @@ cleanup('cleanup test database', async () => {
       const testUserIds = testProfiles.map(p => p.id)
 
       // Clean up test data in correct order (respecting foreign key constraints)
-      console.log('Deleting submissions...')
-      await supabase.from('submissions').delete().in('assignment_id',
-        supabase.from('assignments').select('id').in('class_id',
-          supabase.from('classes').select('id').in('owner_id', testUserIds)
-        )
-      )
+      // First, get class IDs
+      const { data: classIds } = await supabase
+        .from('classes')
+        .select('id')
+        .in('owner_id', testUserIds)
+      const classIdList = classIds?.map(c => c.id) || []
+
+      if (classIdList.length > 0) {
+        // Get assignment IDs
+        const { data: assignmentIds } = await supabase
+          .from('assignments')
+          .select('id')
+          .in('class_id', classIdList)
+        const assignmentIdList = assignmentIds?.map(a => a.id) || []
+
+        // Delete submissions
+        if (assignmentIdList.length > 0) {
+          console.log('Deleting submissions...')
+          await supabase.from('submissions').delete().in('assignment_id', assignmentIdList)
+        }
+      }
 
       console.log('Deleting writings...')
       await supabase.from('writings').delete().in('user_id', testUserIds)
 
-      console.log('Deleting assignments...')
-      await supabase.from('assignments').delete().in('class_id',
-        supabase.from('classes').select('id').in('owner_id', testUserIds)
-      )
+      // Delete assignments
+      if (classIdList.length > 0) {
+        console.log('Deleting assignments...')
+        await supabase.from('assignments').delete().in('class_id', classIdList)
+      }
 
-      console.log('Deleting students...')
-      await supabase.from('students').delete().in('class_id',
-        supabase.from('classes').select('id').in('owner_id', testUserIds)
-      )
+      // Delete students
+      if (classIdList.length > 0) {
+        console.log('Deleting students...')
+        await supabase.from('students').delete().in('class_id', classIdList)
+      }
 
       console.log('Deleting material favorites...')
       await supabase.from('material_favorites').delete().in('user_id', testUserIds)
@@ -58,10 +75,11 @@ cleanup('cleanup test database', async () => {
       console.log('Deleting items...')
       await supabase.from('items').delete().in('owner_id', testUserIds)
 
-      console.log('Deleting learning analytics...')
-      await supabase.from('learning_analytics').delete().in('class_id',
-        supabase.from('classes').select('id').in('owner_id', testUserIds)
-      )
+      // Delete learning analytics
+      if (classIdList.length > 0) {
+        console.log('Deleting learning analytics...')
+        await supabase.from('learning_analytics').delete().in('class_id', classIdList)
+      }
 
       // Delete auth users (this should cascade to profiles)
       console.log('Deleting auth users...')

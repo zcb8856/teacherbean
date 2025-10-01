@@ -129,7 +129,7 @@ async function generateSampleSubmissions(supabase: any, userId: string) {
     const { data: students, error: studentError } = await supabase
       .from('students')
       .select('id, alias, class_id')
-      .in('class_id', classes.map(c => c.id))
+      .in('class_id', classes.map((c: any) => c.id))
       .limit(10)
 
     if (studentError || !students || students.length === 0) {
@@ -140,7 +140,7 @@ async function generateSampleSubmissions(supabase: any, userId: string) {
     // Generate sample submissions
     const submissions = []
     for (const assignment of assignments) {
-      const classStudents = students.filter(s => s.class_id === assignment.class_id)
+      const classStudents = students.filter((s: any) => s.class_id === assignment.class_id)
 
       for (const student of classStudents.slice(0, 5)) { // Limit to 5 students per class
         const score = Math.floor(Math.random() * 40) + 60 // Random score between 60-100
@@ -231,12 +231,12 @@ export async function DELETE(request: NextRequest) {
       await supabase
         .from('submissions')
         .delete()
-        .in('assignment_id', assignments.map(a => a.id))
+        .in('assignment_id', assignments.map((a: any) => a.id))
 
       await supabase
         .from('assignments')
         .delete()
-        .in('id', assignments.map(a => a.id))
+        .in('id', assignments.map((a: any) => a.id))
     }
 
     return NextResponse.json({

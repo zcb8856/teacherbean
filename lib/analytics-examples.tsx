@@ -305,7 +305,7 @@ export const DocumentExporter = () => {
       feature: 'document',
       action: 'start',
       exportFormat: format,
-      exportType: type,
+      exportType: type as "analytics" | "assignment" | "lesson_plan" | "report",
       dataSize: JSON.stringify(data).length
     }, startTime)
 
@@ -341,7 +341,7 @@ export const DocumentExporter = () => {
         feature: 'document',
         action: 'success',
         exportFormat: format,
-        exportType: type,
+        exportType: type as "analytics" | "assignment" | "lesson_plan" | "report",
         fileSize,
         dataSize: JSON.stringify(data).length
       }, startTime)
@@ -355,7 +355,7 @@ export const DocumentExporter = () => {
         feature: 'document',
         action: 'error',
         exportFormat: format,
-        exportType: type
+        exportType: type as "analytics" | "assignment" | "lesson_plan" | "report"
       }, startTime)
 
       throw error

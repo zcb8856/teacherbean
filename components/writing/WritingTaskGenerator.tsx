@@ -100,8 +100,8 @@ export function WritingTaskGenerator({ onTaskGenerated, isGenerating = false }: 
               <label className="text-sm font-medium mb-2 block">文体类型</label>
               <Select
                 value={formData.genre}
-                onValueChange={(value: '记叙文' | '应用文' | '议论文') =>
-                  setFormData(prev => ({ ...prev, genre: value, topic: '' }))
+                onValueChange={(value) =>
+                  setFormData(prev => ({ ...prev, genre: value as '记叙文' | '应用文' | '议论文', topic: '' }))
                 }
               >
                 <SelectTrigger>
@@ -119,8 +119,8 @@ export function WritingTaskGenerator({ onTaskGenerated, isGenerating = false }: 
               <label className="text-sm font-medium mb-2 block">难度级别</label>
               <Select
                 value={formData.level}
-                onValueChange={(value: 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2') =>
-                  setFormData(prev => ({ ...prev, level: value }))
+                onValueChange={(value) =>
+                  setFormData(prev => ({ ...prev, level: value as 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2' }))
                 }
               >
                 <SelectTrigger>

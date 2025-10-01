@@ -91,8 +91,8 @@ export function TemplateCenter({}: TemplateCenterProps) {
       }))
 
       // Load favorites
-      const favoritesSet = new Set(
-        data.data.filter((m: Material) => m.is_favorited).map((m: Material) => m.id)
+      const favoritesSet = new Set<string>(
+        data.data.filter((m: Material) => m.is_favorited).map((m: Material) => m.id as string)
       )
       setFavorites(favoritesSet)
     } catch (error) {

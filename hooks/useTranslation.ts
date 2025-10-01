@@ -1456,20 +1456,6 @@ const translations: Record<string, Record<string, string>> = {
     ar: 'فتح مساعد الدردشة بالذكاء الاصطناعي',
     hi: 'AI चैट सहायक खोलें'
   },
-  'Back to Home': {
-    en: 'Back to Home',
-    zh: '返回首页',
-    es: 'Volver al Inicio',
-    fr: 'Retour à l\'Accueil',
-    de: 'Zurück zur Startseite',
-    it: 'Torna alla Home',
-    pt: 'Voltar ao Início',
-    ru: 'Вернуться на Главную',
-    ja: 'ホームに戻る',
-    ko: '홈으로 돌아가기',
-    ar: 'العودة إلى الصفحة الرئيسية',
-    hi: 'होम पर वापस जाएं'
-  },
   'Create AI-powered lesson plans with CEFR alignment': {
     en: 'Create AI-powered lesson plans with CEFR alignment',
     zh: '创建符合CEFR标准的AI课程计划',

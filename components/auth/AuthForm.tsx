@@ -96,7 +96,10 @@ export function AuthForm({ mode }: AuthFormProps) {
           toast.error(error.message)
         } else {
           toast.success(t('Logged in successfully!'))
-          router.push('/dashboard')
+          // 使用硬刷新确保会话状态正确同步
+          setTimeout(() => {
+            window.location.href = '/dashboard'
+          }, 1000)
         }
       } else {
         const { error } = await supabase.auth.signUp({

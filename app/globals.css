@@ -1,0 +1,95 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 31, 41, 55; /* 深灰色文字 */
+  --background-start-rgb: 255, 247, 237; /* 浅橙色背景 */
+  --background-end-rgb: 255, 237, 213;   /* 浅橙色背景渐变 */
+
+  /* 自定义颜色变量 */
+  --warm-orange-50: 255, 247, 237;
+  --warm-orange-100: 255, 237, 213;
+  --soft-cyan-50: 236, 254, 255;
+  --soft-cyan-100: 207, 250, 254;
+  --soft-cyan-600: 8, 145, 178;
+  --text-primary: 31, 41, 55;
+  --text-primary-light: 55, 65, 81;
+  --text-primary-muted: 107, 114, 128;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+  font-feature-settings: "rlig" 1, "calt" 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 增强可读性的基础样式 */
+@layer base {
+  h1, h2, h3, h4, h5, h6 {
+    font-feature-settings: "rlig" 1, "calt" 1;
+    text-rendering: optimizeLegibility;
+  }
+
+  p, span, div {
+    text-rendering: optimizeLegibility;
+  }
+
+  /* 确保高对比度 */
+  .text-high-contrast {
+    color: rgb(var(--text-primary));
+    text-shadow: 0 0 1px rgba(0, 0, 0, 0.1);
+  }
+
+  /* 卡片阴影增强 */
+  .card-shadow {
+    box-shadow:
+      0 4px 6px -1px rgba(0, 0, 0, 0.1),
+      0 2px 4px -1px rgba(0, 0, 0, 0.06),
+      0 0 0 1px rgba(0, 0, 0, 0.05);
+  }
+
+  .card-shadow-hover {
+    box-shadow:
+      0 10px 15px -3px rgba(0, 0, 0, 0.1),
+      0 4px 6px -2px rgba(0, 0, 0, 0.05),
+      0 0 0 1px rgba(0, 0, 0, 0.05);
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* 高对比度文字工具类 */
+  .text-contrast-high {
+    color: #1f2937;
+    font-weight: 500;
+  }
+
+  .text-contrast-medium {
+    color: #374151;
+    font-weight: 400;
+  }
+
+  .text-contrast-low {
+    color: #6b7280;
+    font-weight: 400;
+  }
+}
